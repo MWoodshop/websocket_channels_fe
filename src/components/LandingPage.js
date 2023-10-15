@@ -12,7 +12,7 @@ function LandingPage() {
   };
 
   const startGame = () => {
-    fetch('http://localhost:3000/channels', {
+    fetch('http://localhost:3000/api/v0/games', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -27,7 +27,7 @@ function LandingPage() {
       return response.json();
     })
     .then(data => {
-      navigate(`/game/${data.channel_name}`); // Use the navigate function here
+      navigate(`/game/${data.room_name}`);
     })
     .catch(error => {
       console.error('Error creating channel:', error);
