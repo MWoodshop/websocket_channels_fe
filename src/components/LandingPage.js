@@ -12,7 +12,7 @@ function LandingPage() {
   };
 
   const startGame = () => {
-    fetch('http://localhost:3000/api/v0/games', {
+    fetch('https://escapelink-be-42ffc95e6cf7.herokuapp.com/api/v0/games', {
       method: 'POST',
       credentials: 'include',
       headers: {
