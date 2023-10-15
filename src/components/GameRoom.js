@@ -7,11 +7,18 @@ function GameRoom() {
   const [nickname, setNickname] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [subscription, setSubscription] = useState(null);
+  const [hasNickname, setHasNickname] = useState(false);
   const { gameId } = useParams();
 
   useEffect(() => {
-    let consumer = ActionCable.createConsumer('ws://localhost:3000/cable');
+    // Check if the user has a saved nickname for this game ID
+    const savedNickname = localStorage.getItem(`nickname_${gameId}`);
+    if (savedNickname) {
+      setNickname(savedNickname);
+      setHasNickname(true);
+    }
 
+    let consumer = ActionCable.createConsumer('ws://localhost:3000/cable');
     let sub = consumer.subscriptions.create(
       { channel: 'GameChannel', room: gameId },
       {
@@ -22,7 +29,6 @@ function GameRoom() {
     );
 
     setSubscription(sub);
-
     return () => {
       sub.unsubscribe();
     };
@@ -38,27 +44,37 @@ function GameRoom() {
     }
   }
 
+  function handleNicknameSubmit() {
+    // Save the nickname to localStorage
+    localStorage.setItem(`nickname_${gameId}`, nickname);
+    setHasNickname(true);
+  }
+
   return (
     <div>
       This is the Game Room for game with ID: {gameId}
 
-      <div>
-        <label>Nickname:</label>
-        <input
-          type="text"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <textarea
-          value={currentMessage}
-          onChange={(e) => setCurrentMessage(e.target.value)}
-          placeholder="Type your message here..."
-        />
-        <button onClick={handleSendMessage}>Send</button>
-      </div>
+      {!hasNickname ? (
+        <div>
+          <label>Nickname:</label>
+          <input
+            type="text"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+          />
+          <button onClick={handleNicknameSubmit}>Set Nickname</button>
+        </div>
+      ) : (
+        <div>
+          <div>Hello, {nickname}!</div>
+          <textarea
+            value={currentMessage}
+            onChange={(e) => setCurrentMessage(e.target.value)}
+            placeholder="Type your message here..."
+          />
+          <button onClick={handleSendMessage}>Send</button>
+        </div>
+      )}
 
       <div>
         {messages.map((message, idx) => (
