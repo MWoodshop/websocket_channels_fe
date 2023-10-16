@@ -18,7 +18,7 @@ function GameRoom() {
       setHasNickname(true);
     }
 
-    let consumer = ActionCable.createConsumer('ws://localhost:3000/cable');
+    let consumer = ActionCable.createConsumer('wss://escapelink-be-42ffc95e6cf7.herokuapp.com/cable');
     let sub = consumer.subscriptions.create(
       { channel: 'GameChannel', room: gameId },
       {
