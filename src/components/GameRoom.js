@@ -8,10 +8,10 @@ function GameRoom() {
   const [currentMessage, setCurrentMessage] = useState("");
   const [subscription, setSubscription] = useState(null);
   const [hasNickname, setHasNickname] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const { gameId } = useParams();
 
   useEffect(() => {
-    // Check if the user has a saved nickname for this game ID
     const savedNickname = localStorage.getItem(`nickname_${gameId}`);
     if (savedNickname) {
       setNickname(savedNickname);
@@ -45,9 +45,13 @@ function GameRoom() {
   }
 
   function handleNicknameSubmit() {
-    // Save the nickname to localStorage
     localStorage.setItem(`nickname_${gameId}`, nickname);
     setHasNickname(true);
+  }
+
+  function handleGameStart() {
+    setGameStarted(true);
+    // Optionally, make a call to your backend here to update game state.
   }
 
   return (
@@ -65,7 +69,7 @@ function GameRoom() {
           <button onClick={handleNicknameSubmit}>Set Nickname</button>
         </div>
       ) : (
-        <div>
+        <>
           <div>Hello, {nickname}!</div>
           <textarea
             value={currentMessage}
@@ -73,7 +77,9 @@ function GameRoom() {
             placeholder="Type your message here..."
           />
           <button onClick={handleSendMessage}>Send</button>
-        </div>
+          {!gameStarted && <button onClick={handleGameStart}>Everyone's here!</button>}
+          {gameStarted && <div>This would be the actual escape room</div>}
+        </>
       )}
 
       <div>
